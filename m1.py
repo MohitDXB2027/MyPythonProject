@@ -1,5 +1,6 @@
 import streamlit as st
-from fpdf import FPDF
+from reportlab.lib.pagesizes import letter
+from reportlab.pdfgen import canvas
 
 # Function to calculate the carbon footprint
 def calculate_carbon_footprint(electricity_bill, gas_bill, fuel_bill):
@@ -22,22 +23,25 @@ if st.button('Calculate Carbon Footprint'):
         
         # Button to download the PDF report
         if st.button('Generate PDF Report'):
-            pdf = FPDF()
-            pdf.add_page()
-            pdf.set_font('Arial', 'B', 12)
-            pdf.cell(200, 10, 'Carbon Footprint Report', ln=True, align='C')
-            pdf.ln(10)
-
-            pdf.set_font('Arial', '', 12)
-            pdf.cell(200, 10, f'Monthly Electricity Bill: {electricity_bill} EUR', ln=True)
-            pdf.cell(200, 10, f'Monthly Gas Bill: {gas_bill} EUR', ln=True)
-            pdf.cell(200, 10, f'Monthly Fuel Bill: {fuel_bill} EUR', ln=True)
-            pdf.cell(200, 10, f'Calculated Carbon Footprint: {carbon_footprint:.2f} kg CO2 per year', ln=True)
-
-            # Save PDF to a file
-            pdf.output("carbon_footprint_report.pdf")
-
-            # Let the user download the PDF
-            st.download_button("Download PDF", "carbon_footprint_report.pdf")
+            # Create PDF using reportlab
+            pdf_filename = "carbon_footprint_report.pdf"
+            c = canvas.Canvas(pdf_filename, pagesize=letter)
+            
+            # Add Title to PDF
+            c.setFont("Helvetica", 16)
+            c.drawString(200, 750, "Carbon Footprint Report")
+            
+            # Add the details to the PDF
+            c.setFont("Helvetica", 12)
+            c.drawString(50, 700, f"Monthly Electricity Bill: {electricity_bill} EUR")
+            c.drawString(50, 675, f"Monthly Gas Bill: {gas_bill} EUR")
+            c.drawString(50, 650, f"Monthly Fuel Bill: {fuel_bill} EUR")
+            c.drawString(50, 625, f"Calculated Carbon Footprint: {carbon_footprint:.2f} kg CO2 per year")
+            
+            # Save the PDF
+            c.save()
+            
+            # Provide the option to download the PDF
+            st.download_button("Download PDF", pdf_filename)
     else:
         st.error("Please enter valid bills for all fields.")
