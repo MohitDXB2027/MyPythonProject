@@ -18,8 +18,7 @@ if st.button('Calculate Carbon FootPrint'):
 
   if electricity_bill and gas_bill and fuel_bill:
     carbon_footprint = calculate_carbon_footprint(electricity_bill, gas_bill, fuel_bill)
-st.write(f"Your estimated carbon footprint is:
-{carbon_footprint:.2f} kg CO2 per year.")
+st.write(f"Your estimated carbon footprint is: {carbon_footprint:.2f} kg CO2 per year.")
 
 def create_simple_pdf():
     buffer = BytesIO()
